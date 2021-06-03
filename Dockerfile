@@ -15,7 +15,6 @@ ENV URL $URL
 
 # Initial steps
 RUN yum clean all && yum install epel-release -y && yum update -y
-RUN cp /etc/hosts ~/hosts.new && sed -i "/127.0.0.1/c\127.0.0.1 localhost localhost.localdomain `hostname`" ~/hosts.new && cp -f ~/hosts.new /etc/hosts
 
 # Required packages
 RUN yum install \
@@ -37,6 +36,8 @@ RUN yum install \
   php7-pear \
   hostname \
   -y
+
+RUN cp /etc/hosts ~/hosts.new && sed -i "/127.0.0.1/c\127.0.0.1 localhost localhost.localdomain `hostname`" ~/hosts.new && cp -f ~/hosts.new /etc/hosts
 
 RUN echo '' | pecl7 install mcrypt
   
