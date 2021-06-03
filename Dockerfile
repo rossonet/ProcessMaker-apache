@@ -7,7 +7,7 @@ MAINTAINER Ar4k - Rossonet <andrea.ambrosini@rossonet.com>
 
 # Extra
 LABEL version="3.5.6"
-LABEL description="ProcessMaker 3.5.6 Docker Container - Apache"
+LABEL description="ProcessMaker 3.5.7 Comunity Docker Container - Apache"
 
 # Declare ARG and ENV Variables
 ARG URL
@@ -35,13 +35,14 @@ RUN yum install \
   php73-mbstring \
   php73-ldap \
   php7-pear \
+  hostname \
   -y
 
 RUN echo '' | pecl7 install mcrypt
   
 # Download ProcessMaker Enterprise Edition from Rossonet cache
-RUN wget -O "/tmp/processmaker-3.5.6.tar.gz" \
-      "https://www.rossonet.net/dati/pmos/processmaker-3.5.6.tar.gz"
+RUN wget -O "/tmp/processmaker-3.5.7.tar.gz" \
+      "https://www.rossonet.net/dati/pmos/processmaker-3.5.7-community.tar.gz"
 	  
 # Copy configuration files
 COPY pmos.conf /etc/httpd/conf.d
