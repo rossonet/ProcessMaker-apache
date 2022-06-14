@@ -23,7 +23,7 @@ jobs:
       - name: Login to GitHub Registry
         uses: docker/login-action@v1
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push
@@ -32,4 +32,4 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: docker.pkg.github.com/rossonet/processmaker-apache:latest
+          tags: ghcr.io/rossonet/processmaker-apache:latest
