@@ -3,9 +3,6 @@ FROM amazonlinux:2018.03
 #FROM centos:7.9.2009
 CMD ["/bin/bash"]
 
-# Maintainer
-MAINTAINER Ar4k - Rossonet <andrea.ambrosini@rossonet.com>
-
 # Extra
 LABEL version="3.5.6"
 LABEL description="ProcessMaker 3.5.7 Comunity Docker Container - Apache"
