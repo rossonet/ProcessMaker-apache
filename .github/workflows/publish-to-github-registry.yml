@@ -32,4 +32,4 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/rossonet/processmaker-apache:latest
+          tags: docker.pkg.github.com/rossonet/processmaker-apache:latest
