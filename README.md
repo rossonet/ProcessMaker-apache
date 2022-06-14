@@ -1,3 +1,7 @@
+# ProcessMaker with Apache reverse proxy
+[![Build and publish docker image to DockerHub](https://github.com/rossonet/ProcessMaker-apache/actions/workflows/publish-to-dockerhub.yml/badge.svg)](https://github.com/rossonet/ProcessMaker-apache/actions/workflows/publish-to-dockerhub.yml)
+[![Build and publish docker image to GitHub Registry](https://github.com/rossonet/ProcessMaker-apache/actions/workflows/publish-to-github-registry.yml/badge.svg)](https://github.com/rossonet/ProcessMaker-apache/actions/workflows/publish-to-github-registry.yml)
+
 ## Build
 
 ```
