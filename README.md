@@ -32,27 +32,27 @@ docker run -d --rm --name pmos -p 8080:8080 -v $(pwd)/processmaker-data:/opt -e 
 
 open the link http://localhost:8080 in the browser. Should appear a page with the dependencies check.
 
-[![Installation page 1](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_one.png)](dependency check page)
+![Installation page 1](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_one.png)
 
 go to the "Next" page.
 
-[![Installation page 2](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_two.png)](storage configuration)
+![Installation page 2](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_two.png)
 
 Next
 
-[![Installation page 3](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_three.png)](licence)
+![Installation page 3](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_three.png)
 
 agree to the license of ProcessMaker, rember is a GNU AFFERO GENERAL PUBLIC LICENSE and click Next
 
-[![Installation page 4](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_four.png)](database configuration)
+![Installation page 4](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_four.png)
 
 fill the password field, in our case my-secret-pw, and the "Host Name" with mysql-db than click on "Test Connection" and Next 
 
-[![Installation page 5](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_five.png)](admin password)
+![Installation page 5](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_five.png)
 
 set the admin password, click on "Check Workspace Configuration" and "Finish"
 
-[![Installation completed](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_six.png)](installation completed)
+![Installation completed](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/page_six.png)
 
 click on "OK"
 
@@ -60,7 +60,7 @@ click on "OK"
 
 go to http://localhost:8080/sysworkflow/en/neoclassic/login/login
 
-[![Login](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/login.png)](login)
+![Login](https://raw.githubusercontent.com/rossonet/ProcessMaker-apache/master/imgs/login.png)
 
 ### Project sponsor 
 
