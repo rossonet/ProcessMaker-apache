@@ -173,9 +173,9 @@ $ sudo rm -rf processmaker-data mysql-data
 
 ## Reference
 
-[Original GitHub repository](https://github.com/rossonet/ProcessMaker-apache)
+[source code on GitHub repository](https://github.com/rossonet/ProcessMaker-apache)
 
-[image at DockerHub](https://hub.docker.com/repository/docker/rossonet/processmaker-apache)
+[image at DockerHub registry](https://hub.docker.com/repository/docker/rossonet/processmaker-apache)
 
 [image at GitHub registry](https://github.com/rossonet/ProcessMaker-apache/pkgs/container/processmaker-apache)
 
