@@ -81,6 +81,7 @@ d4b50ff138e4  localhost/rossonet/processmaker-apache:latest                     
 ```
 
 check the connection between the ProcessMaker container and the database
+
 first of all, install the mysql client package
 ```
 $ docker exec -it pmos yum install -y mysql
@@ -121,7 +122,7 @@ Installed:
 Complete!
 ```
 
-than try the connection between the ProcessMaker container and the database
+than try the connection between the ProcessMaker container and the database ( the password in the example is my-secret-pw )  
 ```
 $ docker exec -it pmos mysql -h mysql-db -p
 Enter password: 
