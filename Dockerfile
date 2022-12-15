@@ -1,74 +1,52 @@
-# Base Image
-FROM amazonlinux:2018.03
-#FROM centos:7.9.2009
-CMD ["/bin/bash"]
+FROM ubuntu:20.04
+LABEL description="ProcessMaker 4 - Community Edition"
 
-# Extra
-LABEL version="3.5.6"
-LABEL description="ProcessMaker 3.5.7 Comunity Docker Container - Apache"
-
-# Declare ARG and ENV Variables
 ARG URL
 ENV URL $URL
+ENV DEBIAN_FRONTEND noninteractive
+ENV TZ=UTC
+ENV DOCKERVERSION=20.10.5
 
-# Initial steps
-RUN yum clean all && yum install epel-release -y && yum update -y
+RUN apt update
 
-# Required packages
-RUN yum install \
-  gcc \
-  wget \
-  nano \
-  sendmail \
-  libmcrypt-devel \
-  httpd24 \
-  mysql57 \
-  php73 \
-  php73-devel \
-  php73-opcache \
-  php73-gd \
-  php73-mysqlnd \
-  php73-soap \
-  php73-mbstring \
-  php73-ldap \
-  php7-pear \
-  hostname \
-  -y
+RUN apt install -y php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl \
+    php-xml php-pear php-bcmath php-imagick php-dom php-sqlite3 vim curl unzip wget supervisor cron \
+    mysql-client build-essential wget iputils-ping \
+    nginx \
+    && apt-get -y autoremove \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-#RUN cp /etc/hosts ~/hosts.new && sed -i "/127.0.0.1/c\127.0.0.1 localhost localhost.localdomain `hostname`" ~/hosts.new && cp -f ~/hosts.new /etc/hosts
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt -y install nodejs
+RUN wget -O composer-setup.php https://getcomposer.org/installer
+RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+RUN composer self-update
 
-RUN echo '' | pecl7 install mcrypt
-  
-# Download ProcessMaker Enterprise Edition from Rossonet cache
-RUN wget -O "/tmp/processmaker-3.5.7.tar.gz" \
-      "https://www.rossonet.net/dati/pmos/processmaker-3.5.7-community.tar.gz"
-	  
-# Copy configuration files
-COPY pmos.conf /etc/httpd/conf.d
-RUN mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.bk
-COPY httpd.conf /etc/httpd/conf
+COPY laravel-cron /etc/cron.d/laravel-cron
+RUN chmod 0644 /etc/cron.d/laravel-cron && crontab /etc/cron.d/laravel-cron
 
-# ProcessMaker required configurations
-RUN sed -i '/memory_limit = 128M/c\memory_limit = 512M' /etc/php.ini && \
-sed -i '/short_open_tag = Off/c\short_open_tag = On' /etc/php.ini && \
-sed -i '/post_max_size = 8M/c\post_max_size = 24M' /etc/php.ini && \
-sed -i '/upload_max_filesize = 2M/c\upload_max_filesize = 24M' /etc/php.ini && \
-sed -i '/;date.timezone =/c\date.timezone = America/New_York' /etc/php.ini && \
-sed -i '/expose_php = On/c\expose_php = Off' /etc/php.ini && \
-echo 'extension=mcrypt.so' >> /etc/php.ini
+RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKERVERSION}.tgz \
+    && tar xzvf docker-${DOCKERVERSION}.tgz --strip 1 -C /usr/local/bin docker/docker \
+    && rm docker-${DOCKERVERSION}.tgz
 
-# OpCache configurations
-RUN sed -i '/;opcache.enable_cli=0/c\opcache.enable_cli=1' /etc/php.d/10-opcache.ini && \
-sed -i '/opcache.max_accelerated_files=4000/c\opcache.max_accelerated_files=10000' /etc/php.d/10-opcache.ini && \
-sed -i '/;opcache.max_wasted_percentage=5/c\opcache.max_wasted_percentage=5' /etc/php.d/10-opcache.ini && \
-sed -i '/;opcache.use_cwd=1/c\opcache.use_cwd=1' /etc/php.d/10-opcache.ini && \
-sed -i '/;opcache.validate_timestamps=1/c\opcache.validate_timestamps=1' /etc/php.d/10-opcache.ini && \
-sed -i '/;opcache.fast_shutdown=0/c\opcache.fast_shutdown=1' /etc/php.d/10-opcache.ini
+RUN mkdir -p /code && wget -q -O "/tmp/processmaker.tar.gz" "https://github.com/ProcessMaker/processmaker/archive/refs/tags/v4.2.36.tar.gz" \
+    && cd /code/ \
+    && tar -xzf /tmp/processmaker.tar.gz \
+    && mv processmaker-* pm4 \
+    && cd pm4 \
+    && composer install \ 
+    && rm /tmp/processmaker.tar.gz
 
-# Apache Ports
-EXPOSE 8080
+WORKDIR /code/pm4
 
-# Docker entrypoint
-COPY docker-entrypoint.sh /bin/
-RUN chmod a+x /bin/docker-entrypoint.sh
-ENTRYPOINT ["docker-entrypoint.sh"]
+EXPOSE 80 6001
+
+COPY docker-entrypoint.sh /code/pm4/docker-entrypoint.sh 
+COPY services.conf /etc/supervisor/conf.d/services.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY laravel-echo-server.json /code/pm4/laravel-echo-server.json
+RUN sed -i 's/www-data/root/g' /etc/php/7.4/fpm/pool.d/www.conf
+RUN npm install --unsafe-perm=true && npm run dev
+
+ENTRYPOINT /code/pm4/docker-entrypoint.sh
