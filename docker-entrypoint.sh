@@ -5,7 +5,7 @@ if [ ! -f /opt/processmaker/docker.configured ]
 then
 	echo "First start of ProcessMaker"
 	# Decompress ProcessMaker
-	cd /tmp && tar -C /opt -xzvf processmaker-3.5.6.tar.gz
+	cd /tmp && tar -C /opt -xzvf processmaker-3.5.8.tar.gz
 	chown -R apache. /opt/processmaker
 	# Set Apache server_name
 	sed -i 's,ServerName server.processmaker.net,ServerName '"${URL}"',g' /etc/httpd/conf.d/pmos.conf
