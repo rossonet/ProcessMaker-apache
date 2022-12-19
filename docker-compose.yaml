@@ -1,0 +1,29 @@
+services:
+  processmaker:
+    depends_on:
+      - mysql-pmos
+    hostname: "processmaker.local"
+    image: rossonet/processmaker-apache:latest
+    ports:
+      - 127.0.0.1:9780:8080/tcp
+    volumes:
+      - ./processmaker-data:/opt
+    env_file:
+      - processmaker.env
+    networks:
+       - backend
+  mysql-pmos:
+    hostname: "processmaker-mysql.local"
+    image: mysql:5.7.40
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: sql.r0ot_password
+    networks:
+       - backend
+networks:
+  backend:
+    name: internal_backend
+
