@@ -4,8 +4,8 @@ FROM amazonlinux:2018.03
 CMD ["/bin/bash"]
 
 # Extra
-LABEL version="3.5.8"
-LABEL description="ProcessMaker 3.5.8 Comunity Docker Container - Apache"
+LABEL version="3.5.7"
+LABEL description="ProcessMaker 3.5.7 Comunity Docker Container - Apache"
 
 # Declare ARG and ENV Variables
 ARG URL
@@ -40,8 +40,8 @@ RUN yum install \
 RUN echo '' | pecl7 install mcrypt
   
 # Download ProcessMaker Enterprise Edition from Rossonet cache
-RUN wget -O "/tmp/processmaker-3.5.8.tar.gz" \
-      "https://www.rossonet.net/dati/pmos/processmaker-3.5.8-community.tar.gz"
+RUN wget -O "/tmp/processmaker-3.5.7.tar.gz" \
+      "https://www.rossonet.net/dati/pmos/processmaker-3.5.7-community.tar.gz"
 	  
 # Copy configuration files
 COPY pmos.conf /etc/httpd/conf.d
