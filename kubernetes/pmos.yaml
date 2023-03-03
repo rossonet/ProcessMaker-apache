@@ -1,0 +1,159 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: processmaker
+spec: {}
+status: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: pmos-mysql-data
+  namespace: processmaker
+spec: 
+  storageClassName: longhorn
+  accessModes: 
+    - ReadWriteOnce
+  resources: 
+    requests: 
+      storage: 10Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pmos-mysql-config
+  namespace: processmaker
+  labels:
+    app: processmaker
+data:
+  my.cnf: |
+    [mysqld]
+    sql_mode = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+    skip-host-cache
+    skip-name-resolve
+    datadir=/var/lib/mysql
+    socket=/var/run/mysqld/mysqld.sock
+    secure-file-priv=/var/lib/mysql-files
+    user=mysql
+    symbolic-links=0
+    pid-file=/var/run/mysqld/mysqld.pid
+    [client]
+    socket=/var/run/mysqld/mysqld.sock
+    !includedir /etc/mysql/conf.d/
+    !includedir /etc/mysql/mysql.conf.d/
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pmos-mysql
+  namespace: processmaker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pmos-mysql
+  template:
+    metadata:
+      labels:
+        app: pmos-mysql
+    spec:
+      containers:
+        - name: pmos-mysql
+          image: mysql:5.7.40
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: sql.r0ot_password
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: pmos-mysql-data
+            - name: db-conf
+              mountPath: /etc/my.cnf
+              subPath: my.cnf
+      volumes:
+        - name: pmos-mysql-data
+          persistentVolumeClaim:
+            claimName: pmos-mysql-data
+        - name: db-conf
+          configMap:
+            name: pmos-mysql-config
+            items:
+            - key: my.cnf
+              path: my.cnf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pmos-mysql
+  namespace: processmaker
+  labels:
+    app: pmos-mysql
+spec:
+  ports:
+   - port: 3306
+  selector:
+   app: pmos-mysql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pmos-engine
+  namespace: processmaker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pmos-engine
+  template:
+    metadata:
+      labels:
+        app: pmos-engine
+    spec:
+      containers:
+        - name: pmos-engine
+          image: rossonet/processmaker-apache:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: URL
+              value: host.domain.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pmos-engine
+  namespace: processmaker
+  labels:
+    app: pmos-engine
+spec:
+  ports:
+   - port: 8080
+  selector:
+   app: pmos-engine
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pmos-web
+  namespace: processmaker
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: test1.apps.bottegaio.net
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: pmos-engine
+              port:
+                number: 80
+
+
+
+
